@@ -1,3 +1,23 @@
+# This file is part of "marvin" which is released under GPL.
+#
+# See file LICENCE or go to http://www.gnu.org/licenses/ for full license
+# details.
+#
+# Copyright (c) 2019 Gabriele N. Tornetta <phoenix1987@gmail.com>.
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from sklearn.datasets import load_digits
 from sklearn.linear_model import LogisticRegression as LR
 from sklearn.model_selection import train_test_split
@@ -37,4 +57,5 @@ def test_layered_hierarchical_classifier():
 
     model = LayeredHierarchicalClassifier(layers, hierarchy)
     model.fit(X_train, y_train)
-    print(model.score(X_test, y_test))
+    assert model.score(X_test, y_test) <= model.h_score(X_test, y_test)
+    assert model.entropy_score(X_test, y_test) >= 0.95

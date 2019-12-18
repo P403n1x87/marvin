@@ -1,11 +1,34 @@
-# Copyright (C) 2019 - Gabriele N. Tornetta. All rights reserved.
+# This file is part of "marvin" which is released under GPL.
+#
+# See file LICENCE or go to http://www.gnu.org/licenses/ for full license
+# details.
+#
+# Copyright (c) 2019 Gabriele N. Tornetta <phoenix1987@gmail.com>.
+# All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from functools import reduce
 import numpy as np
 from operator import mul
 
+from scipy.stats import entropy
+
 from sklearn.base import ClassifierMixin
+from sklearn.metrics import accuracy_score
 from sklearn.utils.metaestimators import _BaseComposition
+
+from marvin.metrics import entropy_score
 
 
 class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
@@ -69,6 +92,11 @@ class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
 
         self._maps = self._maps[::-1]
 
+    def _path(self, c):
+        path = [map[c] for map in self._maps]
+        path.append(c)
+        return path
+
     def fit(self, data, targets):
         self._compute_maps()
         try:
@@ -117,7 +145,7 @@ class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
 
     def predict_proba(self, data):
         predictions = self._predict_proba(data)
-        return predictions / predictions.sum(axis=1)[:,np.newaxis]
+        return predictions / predictions.sum(axis=1)[:, np.newaxis]
 
     def get_params(self, deep=True):
         return self._get_params("layers", deep=deep)
@@ -127,4 +155,19 @@ class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
         return self
 
     def score(self, X, y, sample_weight=None):
-        return np.mean(self.predict(X) == y)
+        return accuracy_score(self.predict(X), y, sample_weight=sample_weight)
+
+    def h_score(self, X, y):
+        """Hierarchical score.
+
+        This is a hierarchical generalisation of micro-precision and
+        micro-recall which, in the multi-class setting, coincide with the
+        accuracy score.
+        """
+        y_true_paths = np.array([self._path(c) for c in y])
+        y_pred_paths = np.array([self._path(c) for c in self.predict(X)])
+
+        return np.mean(y_true_paths == y_pred_paths)
+
+    def entropy_score(self, X, y, alpha=0.5):
+        return entropy_score(y, self.predict_proba(X), self.classes_, alpha)
