@@ -28,6 +28,56 @@ def confusion_entropy():
     pass
 
 
+def cm_purity(cm):
+    """Compute the purity of a confusion matrix.
+
+    Here we define the purity of a confusion matrix to be its normalised
+    Euclidean distance from the identity matrix, subtracted from 1. Hence,
+    the higher the purity, the close the confusion matrix is to the identity.
+
+    Args:
+        cm (array): A square array representing a confusion matrix
+    """
+    try:
+        r, c = cm.shape
+        if r != c:
+            raise ValueError()
+    except ValueError:
+        raise ValueError("A confusion matrix must be a square array.")
+
+    return 1 - np.linalg.norm(
+        cm / cm.sum(axis=1)[:, np.newaxis] - np.identity(r)
+    ) / np.sqrt(2 * r)
+
+
+def probabilistic_confusion_matrix(y_true, Y_pred, classes=None):
+    """Compute the probabilistic confusion matrix.
+
+    This confusion matrix is constructed from the prediction probabilities
+    from, e.g., a classification model. Each row in the matrix is the
+    average prediction probability distribution for the corresponding
+    class.
+
+    Args:
+        y_true (array): The 1D array representing the ground truth.
+
+        Y_pred (array): The 2D array of predicion probabilities for each
+            sample.
+
+        classes (array): The 1D array of classes to use, if given.
+            Otherwise it is derived from the ground truth.
+
+    Returns:
+        (array) A 2D array representing the probabilistic confusion matrix.
+    """
+    return np.array(
+        [
+            np.mean([Y_pred[i] for i in np.where(y_true == c)[0]], axis=0)
+            for c in classes
+        ]
+    )
+
+
 def entropy_score(y_true, Y_pred, classes, alpha=0.5):
     """Compute the entropy score of the predicted probabilities.
 
@@ -53,7 +103,7 @@ def entropy_score(y_true, Y_pred, classes, alpha=0.5):
         Y_pred (array): The 2D array of predicted probabilities for each
             sample.
 
-        classes (array9: The 1D array of the classes (normally the
+        classes (array: The 1D array of the classes (normally the
             ``classes_`` attribute of a scikit-learn estimator.
 
         alpha (float): A parameter between 0 and 1 weighting the entropy
@@ -77,4 +127,12 @@ def mean_entropy(Y):
     """
     return np.mean(
         np.apply_along_axis(lambda x: entropy(x, base=len(x)), axis=1, arr=Y,)
+    )
+
+
+def mean_purity(y_true, Y_pred, classes):
+    return np.mean(
+        1
+        - np.linalg.norm(Y_pred - np.array([classes == c for c in y_true]), axis=1)
+        / np.sqrt(2)
     )

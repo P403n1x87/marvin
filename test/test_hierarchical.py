@@ -24,6 +24,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 
 from marvin.hierarchical import LayeredHierarchicalClassifier
+from marvin.metrics import probabilistic_confusion_matrix, cm_purity, mean_purity
 
 
 def test_layered_hierarchical_classifier():
@@ -51,11 +52,12 @@ def test_layered_hierarchical_classifier():
 
     layers = [
         ("l0", SVC(gamma=0.01, probability=True)),
-        ("shape", LR(solver="lbfgs", multi_class="multinomial", max_iter=5000,),),
+        ("shape", LR(solver="lbfgs", multi_class="multinomial", max_iter=5000,)),
         ("digit", SVC(gamma=0.001, probability=True)),
     ]
 
     model = LayeredHierarchicalClassifier(layers, hierarchy)
     model.fit(X_train, y_train)
+
     assert model.score(X_test, y_test) <= model.h_score(X_test, y_test)
     assert model.entropy_score(X_test, y_test) >= 0.95
