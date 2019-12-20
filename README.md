@@ -45,7 +45,7 @@ Marvin is a collection of machine learning utilities for Python 3.6+.
 Marvin can be installed directly from GitHub with
 
 ~~~ bash
-python3 -m pip install git+https://github.com/P403n1x87/sibilla
+python3 -m pip install git+https://github.com/P403n1x87/marvin
 ~~~
 
 # Examples
