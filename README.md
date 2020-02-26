@@ -11,8 +11,8 @@
     <img src="https://travis-ci.org/P403n1x87/marvin.svg?branch=master"
          alt="Travis CI Build Status for Marvin">
   </a>
-  <img src="https://img.shields.io/badge/version-0.1.0-blue.svg"
-       alt="Version 0.1.0">
+  <img src="https://img.shields.io/badge/version-0.1.1-blue.svg"
+       alt="Version 0.1.1">
   <a href="https://github.com/P403n1x87/marvin/blob/master/LICENSE.md">
     <img src="https://img.shields.io/badge/license-GPLv3-ff69b4.svg"
          alt="LICENSE">

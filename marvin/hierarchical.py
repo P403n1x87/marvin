@@ -103,11 +103,10 @@ class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
             for (_, layer), map in zip(self.layers[:-1], self._maps):
                 layer.fit(data, [map[t] for t in targets])
         except KeyError as e:
-            RuntimeError(
+            raise RuntimeError(
                 "The map at the base of the hierarchy is not supported on all the"
-                "classes seen from the given targets.",
-                e,
-            )
+                "classes seen from the given targets."
+            ) from e
 
         self.layers[-1][1].fit(data, targets)
         self.classes_ = self.layers[-1][1].classes_
