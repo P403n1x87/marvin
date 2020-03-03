@@ -22,13 +22,9 @@ from functools import reduce
 import numpy as np
 from operator import mul
 
-from scipy.stats import entropy
-
 from sklearn.base import ClassifierMixin
 from sklearn.metrics import accuracy_score
 from sklearn.utils.metaestimators import _BaseComposition
-
-from marvin.metrics import entropy_score
 
 
 class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
@@ -167,6 +163,3 @@ class LayeredHierarchicalClassifier(_BaseComposition, ClassifierMixin):
         y_pred_paths = np.array([self._path(c) for c in self.predict(X)])
 
         return np.mean(y_true_paths == y_pred_paths)
-
-    def entropy_score(self, X, y, alpha=0.5):
-        return entropy_score(y, self.predict_proba(X), self.classes_, alpha)
