@@ -24,7 +24,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 
 from marvin.hierarchical import LayeredHierarchicalClassifier
-from marvin.metrics import probabilistic_confusion_matrix, cm_purity, mean_purity
+from marvin.metrics import entropy_score
 
 
 def test_layered_hierarchical_classifier():
@@ -60,4 +60,8 @@ def test_layered_hierarchical_classifier():
     model.fit(X_train, y_train)
 
     assert 0.95 <= model.score(X_test, y_test) <= model.h_score(X_test, y_test) <= 1.0
-    assert 0.95 <= model.entropy_score(X_test, y_test) <= 1.0
+    assert (
+        0.95
+        <= entropy_score(y_test, model.predict_proba(X_test), model.classes_)
+        <= 1.0
+    )

@@ -57,7 +57,10 @@ def test_parent_node_hierarchical_classifier():
     model = ParentNodeHierarchicalClassifier(build_estimator, hierarchy)
     model.fit(X_train, y_train)
 
-    assert 0.95 <= model.score(X_test, y_test) <= model.h_score(X_test, y_test)
+    assert 0.95 <= model.score(X_test, y_test) <= model.h_score(X_test, y_test) <= 1.0
 
-    Y_pred = model.predict_proba(X_test)
-    assert 0.95 <= entropy_score(y_test, Y_pred, model.classes_)
+    assert (
+        0.95
+        <= entropy_score(y_test, model.predict_proba(X_test), model.classes_)
+        <= 1.0
+    )
