@@ -30,7 +30,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="marvin",
-    version="0.1.1",
+    version="0.2.0",
     description="A collection of machine learning utilities for Python 3",
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional (see note above)
